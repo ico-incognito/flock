@@ -18,14 +18,12 @@ events.listener.use(require('body-parser').json());
 /* GET home page. */
 
 
- router.post('/', events.listener, function(req, res, next) {
-    console.log("Statement 1");
-});
+ router.post('/', events.listener);
 
     events.on('client.slashCommand', function (event, callback) {
         // handle slash command event here
         // invoke the callback to send a response to the event
-        console.log('Received your command');
+        callback(null, { text: 'Received your command' });
     });
 
 
