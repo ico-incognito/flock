@@ -18,7 +18,9 @@ events.listener.use(require('body-parser').json());
 /* GET home page. */
 
 
- router.post('/', events.listener);
+ router.post('/', events.listener, function(req, res, next) {
+    console.log("Statement 1");
+});
 
     events.on('client.slashCommand', function (event, callback) {
         // handle slash command event here
