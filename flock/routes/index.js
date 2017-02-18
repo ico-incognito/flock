@@ -23,6 +23,7 @@ events.listener.use(require('body-parser').json());
     events.on('client.slashCommand', function (event, callback) {
         // handle slash command event here
         // invoke the callback to send a response to the event
+        console.log("Received");
         callback(null, { text: 'Received your command' });
     });
 
