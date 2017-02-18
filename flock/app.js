@@ -10,17 +10,33 @@ var request = require('request');
 var util = require('util');
 var qs = require('querystring');
 var http= require('http');
-var app= express();
 
+var flock = require('flockos');
 
 var index = require('./routes/index');
 var users = require('./routes/users');
-var flock = require('./routes/flock');
 
 
 
 
+flock.appId = '2e1325bb-c171-40c2-8ae0-ef3b73124d9d';
+flock.appSecret = '597911b9-ea5b-4d2a-9d01-bf78e20a1a42';
 
+var app= express();
+app.use(flock.events.tokenVerifier);
+
+app.post('/events',flock.events.listener);
+flock.events.on('app.install', function(event, callback){
+    callback();
+});
+flock.events.on('app.install', function(event, callback){
+    callback();
+});
+flock.events.on('client.slashCommand', function (event, callback) {
+    // handle slash command event here
+    // invoke the callback to send a response to the event
+    callback(null, { text: 'Received your command' });
+});
 
 
 
@@ -37,9 +53,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-    app.use('/', index);
-    app.use('/users', users);
-    app.use('/flock', flock);
+app.use('/', index);
+app.use('/users', users);
 
 
 
@@ -50,20 +65,20 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
+    var err = new Error('Not Found');
+    err.status = 404;
+    next(err);
 });
 
 // error handler
 app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+    // set locals, only providing error in development
+    res.locals.message = err.message;
+    res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+    // render the error page
+    res.status(err.status || 500);
+    res.render('error');
 });
 
 module.exports = app;
