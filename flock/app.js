@@ -8,6 +8,9 @@ var EventEmitter = require('events');
 var jwt = require('jsonwebtoken');
 var request = require('request');
 var util = require('util');
+var qs = require('querystring');
+var http= require('http');
+
 
 var index = require('./routes/index');
 var users = require('./routes/users');
@@ -37,10 +40,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 //app.use(flock.events.tokenVerifier);
 
 
-app.use('/', index);
-app.use('/users', users);
-app.use('/flock', flock);
-
+app.post('/form', function(req, res){
+    console.log('you posted: First Name: ');
+});
+    app.use('/', index);
+    app.use('/users', users);
+    app.use('/flock', flock);
 
 events.tokenVerifier = function (req, res, next) {
     // if res.locals.eventTokenPayload exists, we've already run the
