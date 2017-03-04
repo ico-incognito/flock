@@ -22,6 +22,9 @@ var users = require('./routes/users');
 flock.appId = '2e1325bb-c171-40c2-8ae0-ef3b73124d9d';
 flock.appSecret = '597911b9-ea5b-4d2a-9d01-bf78e20a1a42';
 
+var botToken='cbf86380-6f95-4d50-b168-bb79f0acc770';
+var botId='u:Bkkkeezsrowkree4';
+
 var app= express();
 app.use(flock.events.tokenVerifier);
 
@@ -29,14 +32,84 @@ app.post('/events',flock.events.listener);
 flock.events.on('app.install', function(event, callback){
     callback();
 });
-flock.events.on('app.install', function(event, callback){
-    callback();
-});
+
 flock.events.on('client.slashCommand', function (event, callback) {
     // handle slash command event here
     // invoke the callback to send a response to the event
-    callback(null, { text: 'Received your command' });
+    var name=event.userName;
+    var jobj="hahaha";
+    console.log(event.userName);
+    request({
+        method: 'GET',
+        url: 'http://5d6ff8d2.ngrok.io/account?name='+name,
+    }, function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+            var object = JSON.parse(body);
+            console.dir(object, {depth: null, colors: true})
+            console.log(object.account.itemAccountId);
+            console.log(object.account.accountName);
+            jobj="ID: "+object.account.itemAccountId+" Name: "+object.account.accountName+" Transaction ID: "+object.viewKey.transactionId+" Amount: "+object.amount.amount+" "+object.amount.currencyCode;
+            callback(null, { text: jobj });
+        }
+    });
 });
+    flock.events.on('chat.receiveMessage', function(event, callback) {
+        //callback(null,
+        console.log(event.message.text);
+        if(event.message.text=="New Task" && event.message.from=="u:kpvueleeppirddgv")
+        {
+            flock.chat.sendMessage(botToken,{
+                to: event.userId,
+                text: 'Description And Urgency?'
+            });
+        }else if(event.message.text.length<8 && event.message.from=="u:kpvueleeppirddgv" && event.message.text!="Yes")
+        {
+            flock.chat.sendMessage(botToken,{
+                to: event.userId,
+                text: 'Sorry I did not understand'
+            });
+        }else if(event.message.from=="u:kpvueleeppirddgv")
+        {
+            var str=event.message.text+". Mention your worst, best and optimal time required to complete the job";
+
+
+            flock.chat.sendMessage(botToken,{
+                to: "u:8t84y8ey4ky8a8t4",
+                text: str
+            });
+            flock.chat.sendMessage(botToken,{
+                to: "u:n6f1ww9o4cwf664f",
+                text: str
+            });
+
+        }
+
+        if(event.message.from!="u:kpvueleeppirddgv"&& event.message.text.substring(0,5)=="Worst")
+        {
+            flock.chat.sendMessage(botToken,{
+                to: event.message.from,
+                text: 'Thanks for your submission'
+            });
+            var str1= event.message.from+" has replied "+event.message.text;
+            flock.chat.sendMessage(botToken,{
+                to: "u:kpvueleeppirddgv",
+                text: str1
+            });
+        }
+        else if(event.message.from!="u:kpvueleeppirddgv")
+        {
+            flock.chat.sendMessage(botToken,{
+                to: event.message.from,
+                text: 'Sorry I cannot help you'
+            });
+        }
+
+
+    });
+
+
+
+
 
 
 
